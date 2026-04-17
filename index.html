@@ -28,7 +28,7 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--text);min
 .prog-top{display:flex;justify-content:space-between;margin-bottom:10px;}
 .prog-lbl{font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
 .prog-bg{height:2px;background:var(--bdr);border-radius:2px;}
-.prog-fill{height:2px;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--violet));transition:width .4s;}
+.prog-fill{height:2px;border-radius:2px;background:linear-gradient(90deg,#F0C1C1,#FF7443,#FB3B16);transition:width .4s;}
 .q-card{background:var(--surface);border:1px solid var(--bdr);border-radius:16px;padding:28px;}
 .domain-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;border:1px solid;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:600;margin-bottom:6px;}
 .domain-tag svg{width:12px;height:12px;flex-shrink:0;}
@@ -48,8 +48,8 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--text);min
 .nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:22px;}
 .nbtn{background:none;border:1px solid var(--bdr);border-radius:8px;padding:10px 22px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .15s;}
 .nbtn:hover{border-color:var(--bdr2);color:var(--text);}
-.nbtn.primary{background:var(--accent);color:#000;border-color:var(--accent);}
-.nbtn.primary:hover{opacity:.85;}
+.nbtn.primary{background:#fff;color:#1A1A1A;border-color:#fff;display:inline-flex;align-items:center;gap:8px;}
+.nbtn.primary:hover{background:#E2E8F0;border-color:#E2E8F0;}
 .nbtn:disabled{opacity:.25;cursor:default;pointer-events:none;}
 .res-header{margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid var(--bdr);}
 .res-page-title{font-size:clamp(22px,4vw,38px);font-weight:800;letter-spacing:-1.5px;line-height:1.1;}
@@ -69,14 +69,13 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--text);min
 .sec-title:first-child{margin-top:0;}
 .dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .ditem{background:var(--surface);border:1px solid var(--bdr);border-radius:12px;padding:16px;}
-.ditem-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.ditem-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.ditem-left{display:flex;align-items:center;gap:10px;}
 .dicon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .dname{font-size:13px;font-weight:700;margin-bottom:1px;}
 .dpillar-sm{font-size:10px;color:var(--dim);}
-.ditem-bot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;}
-.dscore{font-size:28px;font-weight:800;letter-spacing:-1px;}
-.dscore-lbl{font-size:11px;font-weight:600;font-family:'Space Grotesk',sans-serif;}
-.ddesc{font-size:11px;color:var(--muted);line-height:1.55;}
+.dscore-pill{display:inline-flex;align-items:center;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:800;font-family:'Manrope',sans-serif;border:1px solid;flex-shrink:0;}
+.ditem-body{font-size:12px;color:var(--muted);line-height:1.65;}
 .fi{background:var(--surface);border:1px solid var(--bdr);border-radius:12px;padding:18px;margin-bottom:10px;}
 .fi-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
 .fi-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;font-family:'Space Grotesk',sans-serif;flex-shrink:0;}
@@ -362,18 +361,18 @@ function renderTabContent(){
     h=`<div class="sec-title">Domain breakdown</div><div class="dgrid">`;
     DOMAINS.forEach(d=>{
       const s=ds[d.id];const sc=gsl(s);
+      const narrative=`You scored a <strong style="color:${sc.color}">${s.toFixed(1)}</strong> — <strong style="color:${sc.color}">${sc.label}</strong> — for ${d.desc.charAt(0).toLowerCase()+d.desc.slice(1,-1)}. This means ${d.plainMeaning.charAt(0).toLowerCase()+d.plainMeaning.slice(1)}`;
       h+=`<div class="ditem">
         <div class="ditem-top">
-          <div class="dicon" style="background:${d.bg};border:1px solid ${d.border};">
-            <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="${d.color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${iconInner(d.id)}</svg>
+          <div class="ditem-left">
+            <div class="dicon" style="background:${d.bg};border:1px solid ${d.border};">
+              <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="${d.color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${iconInner(d.id)}</svg>
+            </div>
+            <div><div class="dname">${d.name}</div><div class="dpillar-sm">${d.pillar}</div></div>
           </div>
-          <div><div class="dname">${d.name}</div><div class="dpillar-sm">${d.pillar}</div></div>
+          <div class="dscore-pill" style="color:${sc.color};background:${d.bg};border-color:${d.border};">${s.toFixed(1)}</div>
         </div>
-        <div class="ddesc">${d.desc}</div>
-        <div class="ditem-bot">
-          <div class="dscore-lbl" style="color:${sc.color}">${sc.label}</div>
-          <div class="dscore" style="color:${sc.color}">${s.toFixed(1)}</div>
-        </div>
+        <div class="ditem-body">${narrative}</div>
       </div>`;
     });
     h+=`</div>`;
