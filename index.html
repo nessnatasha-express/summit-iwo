@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IWO Lite — Intelligent Work Orchestration Diagnostic</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#1A1A1A;--surface:#242424;--bdr:rgba(255,255,255,0.07);--bdr2:rgba(255,255,255,0.14);--text:#E2E8F0;--muted:#94A3B8;--dim:#64748B;--accent:#10D4E7;--violet:#616ED8;}
+body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+#app{max-width:960px;margin:0 auto;padding:40px 24px 80px;}
+.eyebrow{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.intro-title{font-size:clamp(28px,5vw,48px);font-weight:800;letter-spacing:-2px;line-height:1.05;margin-bottom:16px;}
+.grad{background:linear-gradient(90deg,var(--accent),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.intro-sub{font-size:15px;color:var(--muted);line-height:1.7;max-width:560px;margin-bottom:28px;}
+.domains-label{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:12px;}
+.domain-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:36px;}
+.dpill{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;border:1px solid;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;}
+.dpill svg{width:13px;height:13px;flex-shrink:0;}
+.start-btn{background:#fff;color:#0F0F1A;border:none;border-radius:8px;padding:13px 32px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:background .2s,transform .2s;display:inline-flex;align-items:center;gap:10px;}
+.start-btn:hover{background:#E2E8F0;transform:scale(1.02);}
+.start-btn:hover .btn-arrow{transform:translateX(5px);}
+.btn-arrow{display:inline-flex;align-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
+@keyframes arrow-pulse{0%,100%{transform:translateX(0);}50%{transform:translateX(4px);}}
+.start-btn .btn-arrow{animation:arrow-pulse 1.6s ease-in-out infinite;}
+.prog-wrap{margin-bottom:24px;}
+.prog-top{display:flex;justify-content:space-between;margin-bottom:10px;}
+.prog-lbl{font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.prog-bg{height:2px;background:var(--bdr);border-radius:2px;}
+.prog-fill{height:2px;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--violet));transition:width .4s;}
+.q-card{background:var(--surface);border:1px solid var(--bdr);border-radius:16px;padding:28px;}
+.domain-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;border:1px solid;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:600;margin-bottom:6px;}
+.domain-tag svg{width:12px;height:12px;flex-shrink:0;}
+.q-label{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;margin-top:16px;}
+.q-text{font-size:16px;font-weight:700;line-height:1.5;margin-bottom:20px;}
+.scale-row{display:flex;gap:8px;}
+.scale-col{display:flex;flex-direction:column;align-items:center;flex:1;}
+.sbtn{width:100%;height:52px;border-radius:10px;border:1.5px solid var(--bdr);background:transparent;cursor:pointer;transition:all .15s;font-size:17px;font-weight:800;font-family:'Manrope',sans-serif;display:flex;align-items:center;justify-content:center;color:var(--dim);}
+.sbtn:hover{border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.04);color:var(--muted);}
+.sbtn.s1{border-color:#FB3B16;background:rgba(251,59,22,0.18);color:#FB3B16 !important;}
+.sbtn.s2{border-color:#F0C1C1;background:rgba(240,193,193,0.18);color:#F0C1C1 !important;}
+.sbtn.s3{border-color:#EAB308;background:rgba(234,179,8,0.18);color:#EAB308 !important;}
+.sbtn.s4{border-color:#B0F976;background:rgba(176,249,118,0.18);color:#B0F976 !important;}
+.sbtn.s5{border-color:#10D4E7;background:rgba(16,212,231,0.18);color:#10D4E7 !important;}
+.val-lbl{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:600;margin-top:5px;height:13px;text-align:center;color:transparent;}
+.val-lbl.vl1{color:#FB3B16;}.val-lbl.vl2{color:#F0C1C1;}.val-lbl.vl3{color:#EAB308;}.val-lbl.vl4{color:#B0F976;}.val-lbl.vl5{color:#10D4E7;}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:22px;}
+.nbtn{background:none;border:1px solid var(--bdr);border-radius:8px;padding:10px 22px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .15s;}
+.nbtn:hover{border-color:var(--bdr2);color:var(--text);}
+.nbtn.primary{background:var(--accent);color:#000;border-color:var(--accent);}
+.nbtn.primary:hover{opacity:.85;}
+.nbtn:disabled{opacity:.25;cursor:default;pointer-events:none;}
+.res-header{margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid var(--bdr);}
+.res-page-title{font-size:clamp(22px,4vw,38px);font-weight:800;letter-spacing:-1.5px;line-height:1.1;}
+.tabs-bar{display:flex;gap:4px;margin-bottom:24px;background:var(--surface);border:1px solid var(--bdr);border-radius:12px;padding:4px;}
+.tab-btn{flex:1;padding:10px 8px;border:none;background:transparent;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.8px;cursor:pointer;border-radius:9px;transition:all .15s;text-transform:uppercase;}
+.tab-btn:hover{color:var(--text);background:rgba(255,255,255,0.04);}
+.tab-btn.active{background:rgba(255,255,255,0.08);color:var(--text);}
+.ov-wrap{background:var(--surface);border:1px solid var(--bdr);border-radius:16px;padding:28px 32px;margin-bottom:16px;display:flex;align-items:center;gap:28px;}
+.big-score{font-size:72px;font-weight:800;letter-spacing:-3px;line-height:1;flex-shrink:0;}
+.score-lbl{font-size:24px;font-weight:700;margin-bottom:4px;}
+.score-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+.ov-sup{font-family:'Space Grotesk',sans-serif;font-size:10px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;margin-top:8px;}
+.radar-wrap{background:var(--surface);border:1px solid var(--bdr);border-radius:16px;padding:28px;margin-bottom:16px;}
+.radar-title{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text);font-weight:600;margin-bottom:4px;}
+.radar-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5;}
+.sec-title{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin:28px 0 12px;}
+.sec-title:first-child{margin-top:0;}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ditem{background:var(--surface);border:1px solid var(--bdr);border-radius:12px;padding:16px;}
+.ditem-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.dicon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.dname{font-size:13px;font-weight:700;margin-bottom:1px;}
+.dpillar-sm{font-size:10px;color:var(--dim);}
+.ditem-bot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;}
+.dscore{font-size:28px;font-weight:800;letter-spacing:-1px;}
+.dscore-lbl{font-size:11px;font-weight:600;font-family:'Space Grotesk',sans-serif;}
+.ddesc{font-size:11px;color:var(--muted);line-height:1.55;}
+.fi{background:var(--surface);border:1px solid var(--bdr);border-radius:12px;padding:18px;margin-bottom:10px;}
+.fi-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.fi-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;font-family:'Space Grotesk',sans-serif;flex-shrink:0;}
+.fi-signal{font-size:12px;color:var(--muted);font-style:italic;line-height:1.6;margin-bottom:10px;}
+.fi-meaning{background:rgba(255,255,255,0.04);border:1px solid var(--bdr);border-radius:8px;padding:11px 13px;font-size:12px;color:var(--text);line-height:1.6;}
+.fi-mlbl{font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px;}
+.pc{background:var(--surface);border:1px solid var(--bdr);border-radius:16px;padding:26px;}
+.p-ey{font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.p-nm{font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:10px;}
+.p-ins{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:14px;}
+.callout{border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+.callout-lbl{font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
+.callout-txt{font-size:12px;line-height:1.6;color:var(--muted);}
+.cr{background:rgba(251,59,22,0.07);border:1px solid rgba(251,59,22,0.2);}.cr .callout-lbl{color:#FB3B16;}
+.ca{background:rgba(234,179,8,0.07);border:1px solid rgba(234,179,8,0.2);}.ca .callout-lbl{color:#EAB308;}
+.gtmc{background:var(--surface);border:1px solid var(--bdr);border-radius:16px;padding:22px;margin-bottom:10px;}
+.gtmc.primary{border-color:var(--accent);}
+.gtm-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#000;padding:4px 12px;border-radius:999px;font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:12px;}
+.gtm-nm{font-size:18px;font-weight:800;letter-spacing:-0.5px;margin-bottom:3px;}
+.gtm-tl{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.gtm-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:14px;}
+.gtm-doms{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.gtm-chip{padding:4px 12px;border-radius:999px;font-size:11px;font-family:'Space Grotesk',sans-serif;font-weight:600;border:1px solid;}
+.gtm-rl{font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.gtm-rt{font-size:12px;line-height:1.65;color:var(--text);}
+.gtm-fn{font-size:11px;color:var(--dim);font-family:'Space Grotesk',sans-serif;margin-top:10px;}
+/* EMAIL CAPTURE */
+.email-section{margin-top:40px;padding-top:32px;border-top:1px solid var(--bdr);}
+.email-eyebrow{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.email-heading{font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;}
+.email-sub{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px;}
+.email-row{display:flex;gap:10px;max-width:520px;}
+.email-input{flex:1;background:var(--surface);border:1px solid var(--bdr2);border-radius:8px;padding:12px 16px;color:var(--text);font-family:'Manrope',sans-serif;font-size:14px;outline:none;transition:border-color .15s;}
+.email-input:focus{border-color:var(--accent);}
+.email-input::placeholder{color:var(--dim);}
+.email-submit{background:var(--accent);color:#000;border:none;border-radius:8px;padding:12px 24px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.5px;cursor:pointer;white-space:nowrap;transition:opacity .2s;}
+.email-submit:hover{opacity:.85;}
+.email-submit:disabled{opacity:.4;cursor:default;}
+.email-success{display:none;align-items:center;gap:10px;padding:14px 18px;background:rgba(16,212,231,0.08);border:1px solid rgba(16,212,231,0.25);border-radius:8px;font-size:13px;color:var(--accent);max-width:520px;}
+.restart-btn{background:none;border:1px solid var(--bdr);border-radius:8px;padding:10px 22px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-top:28px;display:inline-block;}
+.restart-btn:hover{border-color:var(--bdr2);color:var(--text);}
+@media(max-width:600px){.dgrid{grid-template-columns:1fr;}.ov-wrap{flex-direction:column;gap:16px;}.sbtn{height:44px;font-size:15px;}.tab-btn{font-size:9px;padding:8px 4px;}.email-row{flex-direction:column;}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="si"></div>
+  <div id="sq" style="display:none"></div>
+  <div id="sr" style="display:none"></div>
+</div>
+<script>
+const VLAB=['','Disconnected','Fragile','Partially Working','Operational','Fully Orchestrated'];
+
+const ICONS={
+  OA:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>`,
+  DG:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><path d="M11.5 9v3M9 11.5h5"/></svg>`,
+  RS:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="4.5" r="2"/><circle cx="3" cy="12.5" r="1.5"/><circle cx="13" cy="12.5" r="1.5"/><path d="M8 6.5v3M8 9.5l-3.5 2M8 9.5l3.5 2"/></svg>`,
+  CC:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2C5.5 2 3.5 3.8 3.5 6c0 1.5.9 2.8 2.2 3.5L5 14h6l-.7-4.5C11.6 8.8 12.5 7.5 12.5 6c0-2.2-2-4-4.5-4z"/></svg>`,
+  WA:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="3" width="4" height="3" rx="1"/><rect x="6" y="7" width="4" height="3" rx="1"/><rect x="10.5" y="3" width="4" height="3" rx="1"/><path d="M3.5 6v2.5h4.5M12.5 6v2.5H8"/></svg>`,
+  DS:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="8" cy="5" rx="5" ry="2"/><path d="M3 5v3c0 1.1 2.24 2 5 2s5-.9 5-2V5"/><path d="M3 8v3c0 1.1 2.24 2 5 2s5-.9 5-2V8"/></svg>`,
+  TA:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="12" height="8" rx="1.5"/><path d="M5 14h6M8 11v3"/><path d="M5.5 7l1.5 1.5L9.5 6"/></svg>`,
+  AG:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2l1.5 3 3.5.5-2.5 2.4.6 3.6L8 10l-3.1 1.5.6-3.6L3 5.5 6.5 5z"/></svg>`
+};
+
+const DOMAINS=[
+  {id:"OA",name:"Outcome Alignment",         pillar:"Strategy & Structure",color:"#E84393",bg:"rgba(232,67,147,0.12)",   border:"rgba(232,67,147,0.35)",
+   desc:"How clearly your strategic goals translate into shared, measurable outcomes across teams.",
+   frictionSignal:"Teams are busy but progress is hard to see. Functions optimize for their own metrics. Strategic investments don't connect to operational outcomes.",
+   plainMeaning:"Your strategy and day-to-day execution are disconnected. Teams work hard but the work doesn't clearly tie to business results."},
+  {id:"DG",name:"Decision & Governance",     pillar:"Strategy & Structure",color:"#F0C1C1",bg:"rgba(240,193,193,0.12)",border:"rgba(240,193,193,0.35)",
+   desc:"How effectively decision rights are distributed so work moves at the right speed with the right authority.",
+   frictionSignal:"Approvals pile up. The same decisions escalate repeatedly. Teams wait on decisions that should be routine.",
+   plainMeaning:"Your decision-making process creates bottlenecks. Too many approvals, unclear authority, and decisions that should be routine get escalated."},
+  {id:"RS",name:"Role & Structural Design",  pillar:"People & Culture",    color:"#10D4E7",bg:"rgba(16,212,231,0.12)", border:"rgba(16,212,231,0.35)",
+   desc:"How well your org structure and role definitions match the way work actually needs to flow.",
+   frictionSignal:"Work stalls at functional boundaries. Nobody owns the end-to-end. Accountability gaps are known but unfilled.",
+   plainMeaning:"Your org structure doesn't match how work actually needs to flow. People know there are ownership gaps but nobody addresses them structurally."},
+  {id:"CC",name:"Culture & Change Readiness",pillar:"People & Culture",    color:"#616ED8",bg:"rgba(97,110,216,0.12)", border:"rgba(97,110,216,0.35)",
+   desc:"How readily your culture adopts new ways of working and sustains change after rollout.",
+   frictionSignal:"Teams resist working across boundaries. Change initiatives start strong but fade. New processes get announced but old habits persist.",
+   plainMeaning:"Your organization struggles to sustain changes after they're introduced. New processes get announced but old habits persist."},
+  {id:"WA",name:"Workflow Architecture",     pillar:"Process & Data",      color:"#B0F976",bg:"rgba(176,249,118,0.12)",border:"rgba(176,249,118,0.35)",
+   desc:"How intentionally your cross-functional workflows are designed end-to-end rather than inherited by habit.",
+   frictionSignal:"Handoffs break at departmental seams. Rework is common. Each team runs its own version of shared processes.",
+   plainMeaning:"Your core workflows were never intentionally designed end-to-end. They grew organically and break whenever work crosses team boundaries."},
+  {id:"DS",name:"Data & Signal Integration", pillar:"Process & Data",      color:"#FF7443",bg:"rgba(255,116,67,0.12)", border:"rgba(255,116,67,0.35)",
+   desc:"How quickly real-time data reaches the people and systems that need it to make decisions.",
+   frictionSignal:"Data is siloed or untrusted. Decisions are made without real-time signal. Feedback loops are missing across the system.",
+   plainMeaning:"The data your teams need to make good decisions is either unavailable, arrives too late, or isn't trusted enough to act on."},
+  {id:"TA",name:"Tech & AI Orchestration",   pillar:"Technology & AI",     color:"#EAB308",bg:"rgba(234,179,8,0.12)",  border:"rgba(234,179,8,0.35)",
+   desc:"How well your technology platforms and AI tools are connected into — rather than separate from — the work.",
+   frictionSignal:"Platforms don't talk to each other. AI is deployed but doesn't change how work flows. Teams bridge systems manually.",
+   plainMeaning:"You've invested in technology but it's not connected. Teams bridge platforms manually, and AI tools sit outside the actual work process."},
+  {id:"AG",name:"AI Governance & Adoption",  pillar:"Technology & AI",     color:"#008488",bg:"rgba(0,132,136,0.12)",  border:"rgba(0,132,136,0.35)",
+   desc:"How coordinated and governed your AI initiatives are across the organization.",
+   frictionSignal:"AI initiatives are siloed. Governance is inconsistent. Teams are unclear on when and how to use AI.",
+   plainMeaning:"Your AI efforts lack coordination and clear rules. Different teams experiment independently without shared standards or governance."}
+];
+
+const QUESTIONS=[
+  {domain:"OA",id:"OA1",num:1, label:"Shared outcome definition",            text:"When a cross-functional team sits down together, how consistently do they agree on what success looks like for shared work?"},
+  {domain:"OA",id:"OA2",num:2, label:"Investment-to-strategy alignment",      text:"How consistently does investment allocation (budget, headcount, tools) follow stated strategic priorities — rather than historical patterns or political weight?"},
+  {domain:"DG",id:"DG1",num:3, label:"Decision authority distribution",       text:"How clearly is decision authority distributed across your organization — so that each decision is made at the right level without default escalation?"},
+  {domain:"DG",id:"DG2",num:4, label:"Governance tiering and fit",            text:"How well do your governance structures distinguish between decisions that need control versus decisions that need speed?"},
+  {domain:"RS",id:"RS1",num:5, label:"Structure-to-workflow alignment",       text:"How well does your organizational structure align with how work actually flows — across functions — rather than reflecting historical hierarchies?"},
+  {domain:"RS",id:"RS2",num:6, label:"Cross-boundary role clarity",           text:"How clearly are roles defined at the boundaries between functions — where handoffs happen and accountability often breaks down?"},
+  {domain:"CC",id:"CC1",num:7, label:"Cross-functional collaboration norm",   text:"How strongly does your culture support working across functions as a default way of operating — not just when a special project demands it?"},
+  {domain:"CC",id:"CC2",num:8, label:"Change sustainability and follow-through",text:"How effectively does your organization sustain new ways of working after initial rollout — versus reverting to old habits once the excitement fades?"},
+  {domain:"WA",id:"WA1",num:9, label:"Intentional vs. inherited workflow design",text:"How intentionally are your most critical cross-functional workflows designed as end-to-end systems — versus having evolved organically through tribal knowledge?"},
+  {domain:"WA",id:"WA2",num:10,label:"Cross-functional handoff quality",      text:"When work crosses a team boundary, how consistently does it arrive in the right form, at the right time, with the right context — without chasing?"},
+  {domain:"DS",id:"DS1",num:11,label:"Cross-functional data accessibility",   text:"How easily can a team access the data or signal it needs from other parts of the organization — to make decisions, personalize, or understand performance?"},
+  {domain:"DS",id:"DS2",num:12,label:"Signal-to-decision loop speed",         text:"How quickly does your organization convert performance signal into decisions and action — across functions, not just within teams?"},
+  {domain:"TA",id:"TA1",num:13,label:"Platform-to-platform connectivity",     text:"How well do your core technology platforms share context with each other — so that work, data, and decisions move between systems without manual bridging?"},
+  {domain:"TA",id:"TA2",num:14,label:"AI-workflow integration depth",         text:"How effectively is AI integrated into workflows as a working participant — routing, flagging, drafting, deciding — rather than as a standalone tool accessed separately?"},
+  {domain:"AG",id:"AG1",num:15,label:"AI strategy and initiative alignment",  text:"How well do AI initiatives align across the organization — coordinated under a shared strategy rather than fragmented by function or team?"},
+  {domain:"AG",id:"AG2",num:16,label:"AI governance clarity and consistency", text:"How clearly are the rules and guardrails for AI use defined — and how consistently are they applied across teams and use cases?"}
+];
+
+const SL=[
+  {min:1,  max:1.5,label:'Disconnected',      color:'#FB3B16',desc:'No visible connection between this domain and the rest of the system'},
+  {min:1.6,max:2.5,label:'Fragile',           color:'#FF7443',desc:'Connection exists through individual effort or heroics, not structure'},
+  {min:2.6,max:3.5,label:'Partially Working', color:'#EAB308',desc:'Some connection exists but breaks under complexity or scale'},
+  {min:3.6,max:4.5,label:'Operational',       color:'#B0F976',desc:'Well-connected and actively governed'},
+  {min:4.6,max:5,  label:'Fully Orchestrated',color:'#10D4E7',desc:'Seamless integration. Parts amplify each other.'}
+];
+
+const GTM=[
+  {id:"csc", name:"Content Supply Chain",tagline:"The Revenue Revolution",  desc:"Transforming how brands create and deliver content end-to-end — optimized by AI to reduce costs and meet demands in the moments that matter.",triggerDomains:["WA","TA","DS"],threshold:3.0,howThisResolves:"Redesigns content workflows end-to-end with integrated technology and closed-loop performance feedback."},
+  {id:"crm", name:"Modern CRM",          tagline:"The Revenue Revolution",  desc:"Improving marketing performance by integrating Media and CRM to drive direct brand engagement and profitable customer growth.",               triggerDomains:["DS","TA","CC"],threshold:3.0,howThisResolves:"Connects CRM and media systems and teams to create unified customer experiences. Breaks down data silos and shifts culture toward cross-channel coordination."},
+  {id:"b2b", name:"B2B Transformation",  tagline:"Account-Based Everything",desc:"Experience-driven transformation of the entire B2B customer experience, from acquisition through re-engagement and loyalty.",                  triggerDomains:["OA","RS","WA"],threshold:3.0,howThisResolves:"Aligns sales and marketing around shared account objectives with orchestrated ABM workflows."},
+  {id:"aie", name:"AI for Enterprise",   tagline:"Powering Intelligence",   desc:"The future enterprise is orchestrated by AI to drive growth while creating a new frontier of productivity and capability.",                      triggerDomains:["AG","TA","DG"],threshold:3.0,howThisResolves:"Creates governance framework to coordinate AI initiatives and embeds AI into workflows as an active participant."},
+  {id:"aicx",name:"AI for CX",           tagline:"Generative Experience",   desc:"Websites and search are dead — long live websites and search. The next of both will be innovative, dynamically generated.",                      triggerDomains:["AG","WA","DS"],threshold:3.0,howThisResolves:"Redesigns customer experience delivery with AI-native workflows and real-time signal integration."}
+];
+
+const PATTERNS=[
+  {id:"se",name:"Strategy Exists, Execution Doesn't",   req:["OA","WA","RS"],insight:"Leadership has a clear strategy but the organization's structure and workflows weren't redesigned to execute it.",rootCause:"Strategy was created in isolation from operational design. Org structure reflects history, not current strategic needs.",opReality:"Strategic initiatives get announced but don't translate to operational reality. Teams work hard on the wrong things."},
+  {id:"tv",name:"Technology Invested, Value Unrealized", req:["TA","DS"],     insight:"Platforms were purchased and implemented but they're not integrated into workflows or data architecture.",        rootCause:"Technology-led transformation without workflow or data architecture redesign.",                                        opReality:"Technology ROI unrealized. Manual effort increases despite automation investment."},
+  {id:"cs",name:"Change Announced, Nothing Changes",     req:["CC","DG"],     insight:"Change initiatives are announced but don't stick because culture resists and governance doesn't reinforce.",       rootCause:"Change management is an afterthought. New processes introduced without governance to sustain them.",                   opReality:"Transformation initiatives fail to stick after launch. Teams revert to familiar behaviors within weeks."},
+  {id:"aw",name:"AI Deployed, Workflow Unchanged",       req:["AG","WA","TA"],insight:"AI tools exist but sit outside the workflow. Workflows still designed for human-only execution.",                  rootCause:"AI treated as a tool, not a redesign of work. Workflows weren't rethought for human-AI collaboration.",                 opReality:"AI value fragmented across point solutions. No compounding benefit across initiatives."},
+  {id:"eb",name:"Everyone's Busy, Nothing Ships",        req:["WA","DG","DS"],insight:"Workflows break at handoffs, decisions bottle up, and data doesn't reach decision-makers.",                        rootCause:"Process, governance, and data were never designed as a system.",                                                         opReality:"Cycle times extended despite team effort. Rework common at every handoff."},
+  {id:"df",name:"Cross-Domain Friction",                 req:[],              insight:"Multiple organizational domains show alignment friction, indicating systemic coordination challenges.",             rootCause:"Parts of the organization evolved independently. Coordination mechanisms weren't built intentionally.",                 opReality:"Work requires excessive coordination effort. Teams compensate for structural gaps through individual heroics."}
+];
+
+let scores={},cq=0,activeTab='summary',cachedDS=null;
+
+function gsl(s){return SL.find(x=>s>=x.min&&s<=x.max)||SL[2];}
+function dScore(id){const qs=QUESTIONS.filter(q=>q.domain===id);const vs=qs.map(q=>scores[q.id]).filter(v=>v!==undefined);if(!vs.length)return 0;return vs.reduce((a,b)=>a+b)/vs.length;}
+function allDS(){const r={};DOMAINS.forEach(d=>{r[d.id]=dScore(d.id);});return r;}
+function overall(ds){const vs=Object.values(ds).filter(v=>v>0);if(!vs.length)return 0;return vs.reduce((a,b)=>a+b)/vs.length;}
+function fps(ds){return Object.entries(ds).map(([id,s])=>({domain:DOMAINS.find(d=>d.id===id),score:s})).filter(f=>f.score<=3.5).sort((a,b)=>a.score-b.score).slice(0,5);}
+function detPat(fp){const ids=fp.map(f=>f.domain.id);for(const p of PATTERNS){if(!p.req.length)continue;if(p.req.every(id=>ids.includes(id)))return p;}return PATTERNS.find(p=>p.id==='df');}
+function calcGTM(ds){return GTM.map(g=>{const ts=g.triggerDomains.map(id=>ds[id]).filter(v=>v!==undefined);if(ts.length!==g.triggerDomains.length)return null;const avg=ts.reduce((a,b)=>a+b)/ts.length;if(avg>g.threshold)return null;return{gtm:g,fl:avg};}).filter(Boolean).sort((a,b)=>a.fl-b.fl);}
+function iconInner(id){return ICONS[id].replace(/<svg[^>]*>/,'').replace('</svg>','');}
+function pillHTML(d){return `<span class="dpill" style="color:${d.color};background:${d.bg};border-color:${d.border};">${ICONS[d.id]} ${d.name}</span>`;}
+function tagHTML(d){return `<span class="domain-tag" style="color:${d.color};background:${d.bg};border-color:${d.border};">${ICONS[d.id]} ${d.name}</span>`;}
+
+function renderIntro(){
+  document.getElementById('si').innerHTML=`
+    <div class="eyebrow">IWO Diagnosis</div>
+    <h1 class="intro-title">Diagnose your <span style="background:linear-gradient(90deg,#F0C1C1,#FF7443,#FB3B16);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">organizational alignment</span> friction</h1>
+    <p class="intro-sub">In our Intelligent Work Orchestration diagnosis, answer 16 questions across 8 domains to discover where your organization's structure, culture, data, and technology create friction live — and what to do about it.</p>
+    <div class="domains-label">8 domains assessed</div>
+    <div class="domain-pills">${DOMAINS.map(d=>pillHTML(d)).join('')}</div>
+    <button class="start-btn" onclick="startDx()">Start diagnostic <span class="btn-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></button>
+  `;
+}
+
+function startDx(){scores={};cq=0;document.getElementById('si').style.display='none';document.getElementById('sq').style.display='block';renderQ();}
+
+function renderQ(){
+  const q=QUESTIONS[cq];const dom=DOMAINS.find(d=>d.id===q.domain);
+  const pct=Math.round(cq/16*100);const sel=scores[q.id];
+  document.getElementById('sq').innerHTML=`
+    <div class="prog-wrap">
+      <div class="prog-top"><span class="prog-lbl">Question ${q.num} of 16</span><span class="prog-lbl">${pct}%</span></div>
+      <div class="prog-bg"><div class="prog-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="q-card">
+      <div style="margin-bottom:16px;">${tagHTML(dom)}</div>
+      <div class="q-label">${q.label}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="scale-row">
+        ${[1,2,3,4,5].map(v=>`
+          <div class="scale-col">
+            <button class="sbtn${sel===v?' s'+v:''}" onclick="pick(${v})">${v}</button>
+            <span class="val-lbl${sel===v?' vl'+v:''}">${sel===v?VLAB[v]:''}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="nbtn" onclick="goBack()" ${cq===0?'disabled':''}>&#8592; Back</button>
+      <button class="nbtn primary" onclick="goNext()" ${sel===undefined?'disabled':''}>${cq===15?'See results &#8594;':'Next &#8594;'}</button>
+    </div>
+  `;
+}
+
+function pick(v){scores[QUESTIONS[cq].id]=v;renderQ();}
+function goBack(){if(cq>0){cq--;renderQ();}}
+function goNext(){if(scores[QUESTIONS[cq].id]===undefined)return;if(cq===15){showRes();}else{cq++;renderQ();}}
+
+function showRes(){
+  document.getElementById('sq').style.display='none';
+  document.getElementById('sr').style.display='block';
+  cachedDS=allDS();activeTab='summary';
+  renderShell();
+}
+
+function renderShell(){
+  const TABS=[{id:'summary',label:'Summary'},{id:'domains',label:'Domain Breakdowns'},{id:'friction',label:'Friction Points'},{id:'recs',label:'Recommendations'}];
+  document.getElementById('sr').innerHTML=`
+    <div class="res-header">
+      <div class="eyebrow" style="margin-bottom:10px;">IWO Diagnosis</div>
+      <h1 class="res-page-title">Your <span class="grad">Intelligent Work Orchestration</span> Results</h1>
+    </div>
+    <div class="tabs-bar">
+      ${TABS.map(t=>`<button class="tab-btn${activeTab===t.id?' active':''}" onclick="switchTab('${t.id}')">${t.label}</button>`).join('')}
+    </div>
+    <div id="tab-content"></div>
+    <div class="email-section">
+      <div class="email-eyebrow">Get your results</div>
+      <div class="email-heading">Send a copy to your inbox</div>
+      <p class="email-sub">Enter your email and we'll send your full diagnostic results after the show.</p>
+      <div class="email-row">
+        <input class="email-input" id="emailInput" type="email" placeholder="you@company.com" />
+        <button class="email-submit" id="emailBtn" onclick="submitEmail()">Send my results</button>
+      </div>
+      <div class="email-success" id="emailSuccess">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,8 6,12 14,4"/></svg>
+        Done! We'll send your results shortly.
+      </div>
+    </div>
+    <button class="restart-btn" onclick="restart()">&#8592; Retake diagnostic</button>
+  `;
+  renderTabContent();
+}
+
+function submitEmail(){
+  const input=document.getElementById('emailInput');
+  const btn=document.getElementById('emailBtn');
+  const success=document.getElementById('emailSuccess');
+  const email=input.value.trim();
+  if(!email||!email.includes('@'))return;
+  btn.disabled=true;
+  btn.textContent='Sending...';
+  setTimeout(()=>{
+    input.parentElement.style.display='none';
+    success.style.display='flex';
+  },800);
+}
+
+function switchTab(t){
+  activeTab=t;
+  const MAP={summary:'Summary',domains:'Domain Breakdowns',friction:'Friction Points',recs:'Recommendations'};
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim()===MAP[t]));
+  renderTabContent();
+}
+
+function renderTabContent(){
+  const ds=cachedDS;const ov=overall(ds);const sl=gsl(ov);
+  const fp=fps(ds);const pat=detPat(fp);const recs=calcGTM(ds);
+  let h='';
+
+  if(activeTab==='summary'){
+    h=`
+      <div class="ov-wrap">
+        <div class="big-score" style="color:${sl.color}">${ov.toFixed(1)}</div>
+        <div>
+          <div class="score-lbl" style="color:${sl.color}">${sl.label}</div>
+          <div class="score-desc">${sl.desc}</div>
+          <div class="ov-sup">Overall alignment score</div>
+        </div>
+      </div>
+      <div class="radar-wrap">
+        <div class="radar-title">Domain alignment landscape</div>
+        <div class="radar-sub">Visual representation of your orchestration profile — gaps reveal where connectivity breaks down</div>
+        <canvas id="radarCanvas" width="640" height="500" style="display:block;margin:0 auto;"></canvas>
+      </div>
+    `;
+  }
+
+  if(activeTab==='domains'){
+    h=`<div class="sec-title">Domain breakdown</div><div class="dgrid">`;
+    DOMAINS.forEach(d=>{
+      const s=ds[d.id];const sc=gsl(s);
+      h+=`<div class="ditem">
+        <div class="ditem-top">
+          <div class="dicon" style="background:${d.bg};border:1px solid ${d.border};">
+            <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="${d.color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${iconInner(d.id)}</svg>
+          </div>
+          <div><div class="dname">${d.name}</div><div class="dpillar-sm">${d.pillar}</div></div>
+        </div>
+        <div class="ddesc">${d.desc}</div>
+        <div class="ditem-bot">
+          <div class="dscore-lbl" style="color:${sc.color}">${sc.label}</div>
+          <div class="dscore" style="color:${sc.color}">${s.toFixed(1)}</div>
+        </div>
+      </div>`;
+    });
+    h+=`</div>`;
+  }
+
+  if(activeTab==='friction'){
+    h=`<div class="sec-title" style="margin-top:0;">Understanding the gaps</div>
+    <div class="pc">
+      <div class="p-ey">Friction pattern detected</div>
+      <div class="p-nm">${pat.name}</div>
+      <div class="p-ins">${pat.insight}</div>
+      <div class="callout cr"><div class="callout-lbl">Root cause</div><div class="callout-txt">${pat.rootCause}</div></div>
+      <div class="callout ca"><div class="callout-lbl">Operational reality</div><div class="callout-txt">${pat.opReality}</div></div>
+    </div>`;
+    if(fp.length){
+      h+=`<div class="sec-title">Top friction points</div>`;
+      fp.forEach(f=>{
+        const cr=f.score<=2.5;
+        h+=`<div class="fi">
+          <div class="fi-top">
+            <div>
+              <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px;">
+                <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:${f.domain.bg};border:1px solid ${f.domain.border};font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:600;color:${f.domain.color};">
+                  <svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="${f.domain.color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${iconInner(f.domain.id)}</svg>
+                  ${f.domain.name}
+                </span>
+                <span style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:var(--dim);">${f.domain.pillar}</span>
+              </div>
+            </div>
+            <div class="fi-badge" style="background:${cr?'rgba(251,59,22,0.12)':'rgba(234,179,8,0.12)'};color:${cr?'#FB3B16':'#EAB308'};">${f.score.toFixed(1)}</div>
+          </div>
+          <div class="fi-signal">"${f.domain.frictionSignal}"</div>
+          <div class="fi-meaning"><span class="fi-mlbl">What this means</span>${f.domain.plainMeaning}</div>
+        </div>`;
+      });
+    }
+  }
+
+  if(activeTab==='recs'){
+    h=`<div class="sec-title" style="margin-top:0;">Recommendations to resolve</div>`;
+    if(recs.length){
+      recs.forEach((r,i)=>{
+        h+=`<div class="gtmc${i===0?' primary':''}">
+          ${i===0?`<div class="gtm-badge"><span style="width:5px;height:5px;background:#000;border-radius:50%;display:inline-block;margin-right:2px;"></span>Highest-impact opportunity</div>`:''}
+          <div class="gtm-nm">${r.gtm.name}</div>
+          <div class="gtm-tl">${r.gtm.tagline}</div>
+          <div class="gtm-desc">${r.gtm.desc}</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Addresses friction in</div>
+          <div class="gtm-doms">${r.gtm.triggerDomains.map(id=>{const d=DOMAINS.find(x=>x.id===id);return`<span class="gtm-chip" style="color:${d.color};border-color:${d.border};background:${d.bg};">${d.name} ${ds[id].toFixed(1)}</span>`;}).join('')}</div>
+          <div class="gtm-rl">How this resolves the friction</div>
+          <div class="gtm-rt">${r.gtm.howThisResolves}</div>
+          <div class="gtm-fn">Combined friction score: ${r.fl.toFixed(2)}</div>
+        </div>`;
+      });
+    } else {
+      h+=`<div class="pc"><div class="p-ins">No specific GTM initiative triggered. Your alignment scores suggest a strong operational foundation — consider a discovery workshop to identify targeted optimization opportunities.</div></div>`;
+    }
+  }
+
+  document.getElementById('tab-content').innerHTML=h;
+  if(activeTab==='summary') setTimeout(()=>drawRadar(ds),30);
+}
+
+function drawRadar(ds){
+  const canvas=document.getElementById('radarCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height,cx=W/2,cy=H/2+10,R=Math.min(W,H)*0.33;
+  const labels=["Outcome\nAlignment","Decision &\nGovernance","Role &\nStructure","Culture &\nChange","Workflow\nArchitecture","Data &\nSignal","Tech & AI\nOrchestration","AI Governance\n& Adoption"];
+  const ids=["OA","DG","RS","CC","WA","DS","TA","AG"];
+  const domColors=ids.map(id=>DOMAINS.find(d=>d.id===id).color);
+  const n=8,vals=ids.map(id=>ds[id]||0);
+  ctx.clearRect(0,0,W,H);
+  for(let r=1;r<=5;r++){
+    const rr=R*(r/5);ctx.beginPath();
+    for(let i=0;i<n;i++){const a=i*(2*Math.PI/n)-Math.PI/2;i===0?ctx.moveTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)):ctx.lineTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a));}
+    ctx.closePath();ctx.strokeStyle='rgba(255,255,255,0.07)';ctx.lineWidth=1;ctx.stroke();
+    if(r===5){ctx.fillStyle='rgba(255,255,255,0.02)';ctx.fill();}
+  }
+  for(let i=0;i<n;i++){const a=i*(2*Math.PI/n)-Math.PI/2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=1;ctx.stroke();}
+  for(let r=1;r<=5;r++){const rr=R*(r/5);ctx.fillStyle='rgba(255,255,255,0.18)';ctx.font='10px Space Grotesk,sans-serif';ctx.textAlign='center';ctx.fillText(r,cx+4,cy-rr+4);}
+  ctx.beginPath();
+  vals.forEach((v,i)=>{const a=i*(2*Math.PI/n)-Math.PI/2;const r=R*(Math.max(0,v-1)/4);i===0?ctx.moveTo(cx+r*Math.cos(a),cy+r*Math.sin(a)):ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));});
+  ctx.closePath();ctx.fillStyle='rgba(16,212,231,0.1)';ctx.fill();ctx.strokeStyle='#10D4E7';ctx.lineWidth=2;ctx.stroke();
+  vals.forEach((v,i)=>{
+    const a=i*(2*Math.PI/n)-Math.PI/2;const r=R*(Math.max(0,v-1)/4);
+    const x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);
+    ctx.beginPath();ctx.arc(x,y,5,0,2*Math.PI);ctx.fillStyle=domColors[i];ctx.fill();ctx.strokeStyle='#1A1A1A';ctx.lineWidth=1.5;ctx.stroke();
+  });
+  const lr=R+58;
+  labels.forEach((label,i)=>{
+    const a=i*(2*Math.PI/n)-Math.PI/2;const lx=cx+lr*Math.cos(a),ly=cy+lr*Math.sin(a);
+    ctx.fillStyle='rgba(148,163,184,0.85)';ctx.font='11px Manrope,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    const lines=label.split('\n');const lh=15;const th=(lines.length-1)*lh;
+    lines.forEach((line,li)=>{ctx.fillText(line,lx,ly-th/2+li*lh);});
+    const sv=vals[i];const sc=gsl(sv);
+    ctx.fillStyle=sc.color;ctx.font='bold 12px Manrope,sans-serif';ctx.fillText(sv.toFixed(1),lx,ly+th/2+15);
+  });
+}
+
+function restart(){scores={};cq=0;cachedDS=null;document.getElementById('sr').style.display='none';document.getElementById('si').style.display='block';renderIntro();}
+renderIntro();
+</script>
+</body>
+</html>
