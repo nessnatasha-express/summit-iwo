@@ -18,7 +18,8 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--text);min
 .domain-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:36px;}
 .dpill{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;border:1px solid;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;}
 .dpill svg{width:13px;height:13px;flex-shrink:0;}
-.start-btn{background:#fff;color:#0F0F1A;border:none;border-radius:8px;padding:13px 32px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:background .2s,transform .2s;display:inline-flex;align-items:center;gap:10px;}
+@keyframes btn-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,0.3);}50%{box-shadow:0 0 0 8px rgba(255,255,255,0);}}
+.start-btn{background:#fff;color:#1A1A1A;border:none;border-radius:8px;padding:13px 32px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:background .2s,transform .2s;display:inline-flex;align-items:center;gap:10px;animation:btn-pulse 2s ease-in-out infinite;}
 .start-btn:hover{background:#E2E8F0;transform:scale(1.02);}
 .start-btn:hover .btn-arrow{transform:translateX(5px);}
 .btn-arrow{display:inline-flex;align-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
@@ -30,10 +31,10 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--text);min
 .prog-bg{height:2px;background:var(--bdr);border-radius:2px;}
 .prog-fill{height:2px;border-radius:2px;background:linear-gradient(90deg,#F0C1C1,#FF7443,#FB3B16);transition:width .4s;}
 .q-card{background:var(--surface);border:1px solid var(--bdr);border-radius:16px;padding:28px;}
-.domain-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;border:1px solid;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:600;margin-bottom:6px;}
+.domain-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;border:1px solid;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;}
 .domain-tag svg{width:12px;height:12px;flex-shrink:0;}
 .q-label{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;margin-top:16px;}
-.q-text{font-size:16px;font-weight:700;line-height:1.5;margin-bottom:20px;}
+.q-text{font-size:19px;font-weight:700;line-height:1.5;margin-bottom:20px;}
 .scale-row{display:flex;gap:8px;}
 .scale-col{display:flex;flex-direction:column;align-items:center;flex:1;}
 .sbtn{width:100%;height:52px;border-radius:10px;border:1.5px solid var(--bdr);background:transparent;cursor:pointer;transition:all .15s;font-size:17px;font-weight:800;font-family:'Manrope',sans-serif;display:flex;align-items:center;justify-content:center;color:var(--dim);}
@@ -50,6 +51,8 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--text);min
 .nbtn:hover{border-color:var(--bdr2);color:var(--text);}
 .nbtn.primary{background:#fff;color:#1A1A1A;border-color:#fff;display:inline-flex;align-items:center;gap:8px;}
 .nbtn.primary:hover{background:#E2E8F0;border-color:#E2E8F0;}
+.nbtn.primary:not(:disabled) .next-arrow{animation:arrow-pulse 1s ease-in-out infinite;}
+.next-arrow{display:inline-flex;align-items:center;transition:transform .2s;}
 .nbtn:disabled{opacity:.25;cursor:default;pointer-events:none;}
 .res-header{margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid var(--bdr);}
 .res-page-title{font-size:clamp(22px,4vw,38px);font-weight:800;letter-spacing:-1.5px;line-height:1.1;}
@@ -117,6 +120,11 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--text);min
 .email-success{display:none;align-items:center;gap:10px;padding:14px 18px;background:rgba(16,212,231,0.08);border:1px solid rgba(16,212,231,0.25);border-radius:8px;font-size:13px;color:var(--accent);max-width:520px;}
 .restart-btn{background:none;border:1px solid var(--bdr);border-radius:8px;padding:10px 22px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-top:28px;display:inline-block;}
 .restart-btn:hover{border-color:var(--bdr2);color:var(--text);}
+@keyframes sbtn-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,0.2);}50%{box-shadow:0 0 0 6px rgba(255,255,255,0);}}
+.sbtn.s1,.sbtn.s2,.sbtn.s3,.sbtn.s4,.sbtn.s5{animation:sbtn-pulse 1.6s ease-in-out infinite;}
+.anchor-box{padding:14px 16px;background:rgba(255,255,255,0.04);border:1px solid var(--bdr);border-radius:8px;}
+.anchor-lbl{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text);margin-bottom:6px;}
+.anchor-txt{font-size:13px;color:var(--muted);line-height:1.6;}
 @media(max-width:600px){.dgrid{grid-template-columns:1fr;}.ov-wrap{flex-direction:column;gap:16px;}.sbtn{height:44px;font-size:15px;}.tab-btn{font-size:9px;padding:8px 4px;}.email-row{flex-direction:column;}}
 </style>
 </head>
@@ -306,12 +314,13 @@ function tagHTML(d){return `<span class="domain-tag" style="color:${d.color};bac
 
 function renderIntro(){
   document.getElementById('si').innerHTML=`
-    <div class="eyebrow">IWO Diagnosis</div>
-    <h1 class="intro-title">Diagnose your <span style="background:linear-gradient(90deg,#F0C1C1,#FF7443,#FB3B16);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">organizational alignment</span> friction</h1>
-    <p class="intro-sub">In our Intelligent Work Orchestration diagnosis, answer 16 questions across 8 domains to discover where your organization's structure, culture, data, and technology create friction live — and what to do about it.</p>
-    <div class="domains-label">8 domains assessed</div>
-    <div class="domain-pills">${DOMAINS.map(d=>pillHTML(d)).join('')}</div>
+    <div class="eyebrow">Intelligent Work Orchestration Diagnostic</div>
+    <h1 class="intro-title">Is <span style="background:linear-gradient(90deg,#F0C1C1,#FF7443,#FB3B16);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">organizational friction</span> blocking value realization?</h1>
+    <p class="intro-sub">You've invested in AI, platforms, and talent. Why isn't it delivering value? It's not a capability gap. It's fragmentation across teams, workflows, data, and technology. Our Intelligent Work Orchestration diagnostic will show where fragmentation and misalignment is holding your organization back — and what to do next.</p>
     <button class="start-btn" onclick="startDx()">Start diagnostic <span class="btn-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></button>
+    <hr style="border:none;border-top:1px solid rgba(255,255,255,0.08);margin:36px 0;">
+    <div class="domains-label">8 Domains Assessed Across 16 Questions</div>
+    <div class="domain-pills">${DOMAINS.map(d=>`<span class="dpill" style="color:${d.color};background:${d.bg};border-color:${d.border};">${ICONS[d.id]} ${d.name.toUpperCase()}</span>`).join('')}</div>
   `;
 }
 
@@ -339,19 +348,19 @@ function renderQ(){
       </div>
       ${q.anchor1?`
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px;">
-        <div style="padding:10px 12px;background:rgba(255,255,255,0.04);border:1px solid var(--bdr);border-radius:8px;">
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);margin-bottom:4px;">Score 1 looks like</div>
-          <div style="font-size:11px;color:var(--muted);line-height:1.55;">${q.anchor1}</div>
+        <div class="anchor-box">
+          <div class="anchor-lbl">Score 1 looks like</div>
+          <div class="anchor-txt">${q.anchor1}</div>
         </div>
-        <div style="padding:10px 12px;background:rgba(255,255,255,0.04);border:1px solid var(--bdr);border-radius:8px;">
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);margin-bottom:4px;">Score 5 looks like</div>
-          <div style="font-size:11px;color:var(--muted);line-height:1.55;">${q.anchor5}</div>
+        <div class="anchor-box">
+          <div class="anchor-lbl">Score 5 looks like</div>
+          <div class="anchor-txt">${q.anchor5}</div>
         </div>
       </div>`:``}
     </div>
     <div class="nav-row">
       <button class="nbtn" onclick="goBack()" ${cq===0?'disabled':''}>&#8592; Back</button>
-      <button class="nbtn primary" onclick="goNext()" ${sel===undefined?'disabled':''}>${cq===15?'See results &#8594;':'Next &#8594;'}</button>
+      <button class="nbtn primary" onclick="goNext()" ${sel===undefined?'disabled':''}>${cq===15?'See results <span class="next-arrow"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>':'Next <span class="next-arrow"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>'}</button>
     </div>
   `;
 }
@@ -368,11 +377,17 @@ function showRes(){
 }
 
 function renderShell(){
+  const ds=cachedDS;const ov=overall(ds);const sl=gsl(ov);
+  const fp=fps(ds);const pat=detPat(fp);const recs=calcGTM(ds);
+  const topFriction=fp.slice(0,3).map(f=>f.domain.name).join(', ');
+  const recNames=recs.slice(0,2).map(r=>r.gtm.name).join(' and ');
+  const summaryText=`Your organization scored <strong style="color:${sl.color}">${ov.toFixed(1)} — ${sl.label}</strong> across 8 domains of work orchestration. ${fp.length>0?`The most significant friction appears in <strong style="color:var(--text)">${topFriction}</strong>, which together indicate a pattern of <strong style="color:var(--text)">${pat.name}</strong>.`:''} ${recs.length>0?`Based on where friction is highest, <strong style="color:var(--text)">${recNames}</strong> ${recs.length===1?'is':'are'} the highest-impact areas to address first.`:'Your alignment scores suggest a strong operational foundation across all domains.'}`;
   const TABS=[{id:'summary',label:'Summary'},{id:'domains',label:'Domain Breakdowns'},{id:'friction',label:'Friction Points'},{id:'recs',label:'Recommendations'}];
   document.getElementById('sr').innerHTML=`
     <div class="res-header">
       <div class="eyebrow" style="margin-bottom:10px;">IWO Diagnosis</div>
-      <h1 class="res-page-title">Your <span class="grad">Intelligent Work Orchestration</span> Results</h1>
+      <h1 class="res-page-title">Your <span style="background:linear-gradient(90deg,#F0C1C1,#FF7443,#FB3B16);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Intelligent Work Orchestration</span> Results</h1>
+      <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-top:12px;max-width:700px;">${summaryText}</p>
     </div>
     <div class="tabs-bar">
       ${TABS.map(t=>`<button class="tab-btn${activeTab===t.id?' active':''}" onclick="switchTab('${t.id}')">${t.label}</button>`).join('')}
@@ -444,7 +459,7 @@ function renderTabContent(){
     h=`<div class="sec-title">Domain breakdown</div><div class="dgrid">`;
     DOMAINS.forEach(d=>{
       const s=ds[d.id];const sc=gsl(s);
-      const narrative=`You scored a <strong style="color:${sc.color}">${s.toFixed(1)}</strong> — <strong style="color:${sc.color}">${sc.label}</strong> — for ${d.desc.charAt(0).toLowerCase()+d.desc.slice(1,-1)}. This means ${d.plainMeaning.charAt(0).toLowerCase()+d.plainMeaning.slice(1)}${d.businessImpact?' <span style="color:var(--dim);font-size:11px;">'+d.businessImpact+'</span>':''}`;
+      const narrative=`${d.businessImpact?`<span style="font-size:12px;color:var(--muted);line-height:1.65;display:block;margin-bottom:8px;">${d.businessImpact}</span>`:''}You scored a <strong style="color:${sc.color}">${s.toFixed(1)}</strong> — <strong style="color:${sc.color}">${sc.label}</strong> — for ${d.desc.charAt(0).toLowerCase()+d.desc.slice(1,-1)}. This means ${d.plainMeaning.charAt(0).toLowerCase()+d.plainMeaning.slice(1)}`;
       h+=`<div class="ditem">
         <div class="ditem-top">
           <div class="ditem-left">
@@ -488,7 +503,8 @@ function renderTabContent(){
             <div class="fi-badge" style="background:${cr?'rgba(251,59,22,0.12)':'rgba(234,179,8,0.12)'};color:${cr?'#FB3B16':'#EAB308'};">${f.score.toFixed(1)}</div>
           </div>
           <div class="fi-signal">"${f.domain.frictionSignal}"</div>
-          <div class="fi-meaning"><span class="fi-mlbl">What this means</span>${f.domain.plainMeaning}</div>
+          <hr style="border:none;border-top:1px solid rgba(255,255,255,0.07);margin:12px 0;">
+          <div><span style="font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">What this means</span><span style="font-size:12px;color:var(--text);line-height:1.6;">${f.domain.plainMeaning}</span></div>
         </div>`;
       });
     }
@@ -498,7 +514,7 @@ function renderTabContent(){
     h=`<div class="sec-title" style="margin-top:0;">Recommendations to resolve</div>`;
     if(recs.length){
       recs.forEach((r,i)=>{
-        const capList=r.gtm.capabilities?r.gtm.capabilities.map(c=>`<li style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:3px;">${c}</li>`).join(''):'';
+        const capList=r.gtm.capabilities?r.gtm.capabilities.map(c=>`<li style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:3px;">${c}</li>`).join(''):'';
         h+=`<div class="gtmc${i===0?' primary':''}">
           ${i===0?`<div class="gtm-badge"><span style="width:5px;height:5px;background:#000;border-radius:50%;display:inline-block;margin-right:2px;"></span>Highest-impact opportunity</div>`:''}
           <div class="gtm-nm">${r.gtm.name}</div>
@@ -510,13 +526,18 @@ function renderTabContent(){
           <div class="gtm-rt" style="margin-bottom:16px;">${r.gtm.howThisResolves}</div>
           ${r.gtm.capabilities?`
           <div style="font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Core capabilities</div>
-          <ul style="list-style:none;padding:0;margin:0 0 16px 0;">${capList}</ul>
+          <ul style="list-style:disc;padding-left:18px;margin:0 0 16px 0;">${capList}</ul>
           `:''}
           ${r.gtm.wedgeOffer?`
-          <div style="padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid var(--bdr);border-radius:8px;">
-            <div style="font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">Suggested first step — ${r.gtm.wedgeDuration}</div>
-            <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">${r.gtm.wedgeOffer}</div>
-            <div style="font-size:12px;color:var(--muted);line-height:1.6;">${r.gtm.wedgeOutcome}</div>
+          <div style="padding:14px 16px;background:rgba(255,255,255,0.04);border:1px solid var(--bdr);border-radius:8px;display:flex;gap:14px;align-items:flex-start;">
+            <div style="flex-shrink:0;margin-top:1px;">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="2" width="16" height="18" rx="2"/><path d="M7 7h8M7 11h8M7 15h5"/><path d="M7 7l0 0"/></svg>
+            </div>
+            <div style="flex:1;">
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:5px;">Suggested first step — ${r.gtm.wedgeDuration}</div>
+              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">${r.gtm.wedgeOffer}</div>
+              <div style="font-size:12px;color:var(--muted);line-height:1.6;">${r.gtm.wedgeOutcome}</div>
+            </div>
           </div>
           `:''}
           <div class="gtm-fn">Combined friction score: ${r.fl.toFixed(2)}</div>
