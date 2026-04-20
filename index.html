@@ -369,10 +369,36 @@ function pick(v){scores[QUESTIONS[cq].id]=v;renderQ();}
 function goBack(){if(cq>0){cq--;renderQ();}}
 function goNext(){if(scores[QUESTIONS[cq].id]===undefined)return;if(cq===15){showRes();}else{cq++;renderQ();}}
 
+const SHEET_URL='https://script.google.com/macros/s/AKfycbzNiSfK7YwF23n5lrKbMDCHl_QBgOeyJCXZkwAFrbnyye1hfwtFvVO77qVZcPvbH8nv/exec';
+
+function buildPayload(email){
+  const ds=cachedDS||allDS();
+  const ov=overall(ds);
+  const sl=gsl(ov);
+  const fp=fps(ds);
+  const pat=detPat(fp);
+  const recs=calcGTM(ds);
+  return{
+    email:email||'',
+    overallScore:ov.toFixed(2),
+    overallLabel:sl.label,
+    OA:(ds.OA||0).toFixed(2),DG:(ds.DG||0).toFixed(2),RS:(ds.RS||0).toFixed(2),CC:(ds.CC||0).toFixed(2),
+    WA:(ds.WA||0).toFixed(2),DS:(ds.DS||0).toFixed(2),TA:(ds.TA||0).toFixed(2),AG:(ds.AG||0).toFixed(2),
+    frictionPattern:pat.name,
+    topRecommendation:recs.length?recs[0].gtm.name:'None',
+    allRecommendations:recs.map(r=>r.gtm.name).join(', ')||'None'
+  };
+}
+
+function postToSheet(payload){
+  fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
+}
+
 function showRes(){
   document.getElementById('sq').style.display='none';
   document.getElementById('sr').style.display='block';
   cachedDS=allDS();activeTab='summary';
+  postToSheet(buildPayload(''));
   renderShell();
 }
 
@@ -419,6 +445,7 @@ function submitEmail(){
   if(!email||!email.includes('@'))return;
   btn.disabled=true;
   btn.textContent='Sending...';
+  postToSheet(buildPayload(email));
   setTimeout(()=>{
     input.parentElement.style.display='none';
     success.style.display='flex';
